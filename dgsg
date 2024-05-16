@@ -1,0 +1,16 @@
+# 绘制 页面访问频率排名 柱状图
+def plot_bar_website_count_rank(value, history_data):
+
+    # 频率字典
+    dict_data = {}
+
+    # 对历史记录文件进行遍历
+    for data in history_data:
+        url = data[1]
+        # 简化url
+        key = url_simplification(url)
+
+        if (key in dict_data.keys()):
+            dict_data[key] += 1
+        else:
+            dict_data[key] = 0
