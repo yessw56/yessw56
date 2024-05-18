@@ -1,0 +1,35 @@
+
+        # 实时检测二维码状态
+        while (True):
+            # 目标网址
+            target_url ='https://ssl.ptlogin2.qq.com/ptqrlogin?u1=https%3A%2F%2Fqun.qq.com%2Fmember.html%23&ptqrtoken={}&ptredirect=1&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=1-5-1647508149682&js_ver=22030810&js_type=1&login_sig={}&pt_uistyle=40&aid=715030901&daid=73&ptdrvs=zE3Wcrd07f4ZnrPfNLLsdLfVh-6bEh5vNlgIR2dcTfep1pxoywDr2Yw03vvhZswWdGxT2OCdJkA_&sid=2353889993957767859&'.format(ptqrtoken, pt_login_sig)
+
+            # 登录，需要带上访问cookies
+            html = get_html(target_url, self.cookies_merge_dict_in_qun_qq_com)
+
+            # 返回的响应码为200说明二维码没过期
+            if (html.status_code):
+                if ('二维码未失效' in html.text):
+                    custom_print(u'(2/3)登录qun.qq.com中，当前二维码未失效，请你扫描二维码进行登录')
+                elif ('二维码认证' in html.text):
+                    custom_print(u'(2/3)登录qun.qq.com中，扫描成功，正在认证中')
+                elif ('登录成功' in html.text):
+                    self.is_login = True
+                    custom_print(u'(2/3)登录qun.qq.com中，登录成功')
+                    break
+                if ('二维码已经失效' in html.text):
+                    custom_print(u'(2/3)登录qun.qq.com中，当前二维码已失效，请重启本软件')
+                    exit()
+
+            # 延时
+            time.sleep(2)
+
+        # 登录成功后，把返回的cookies合并进去
+        cookies_back_dict = dict_from_cookiejar(html.cookies)
+        self.cookies_merge_dict_in_qun_qq_com.update(cookies_back_dict)
+        # print(u'当前cookies:{}'.format(cookies_merge_dict))
+
+        # 获取此次登录的qq号码
+        qq_list = re.findall(r'&uin=(.+?)&service', html.text)
+        self.qq_number = qq_list[0]
+
