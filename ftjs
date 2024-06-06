@@ -1,0 +1,37 @@
+public boolean closePayOrder(String orderNo) {
+        JSONObject obj = new JSONObject();
+        // 直连商户号
+        obj.put("mchid", WxPayUtils.mchId);
+        // 请求地址
+        String closeOrderUrl = ConstantUtils.CLOSE_PAY_ORDER_URL.replace("{out_trade_no}", orderNo);
+ 
+        HttpPost httpPost = new HttpPost(closeOrderUrl);
+        httpPost.addHeader("Accept", "application/json");
+        httpPost.addHeader("Content-type", "application/json; charset=utf-8");
+        httpPost.setEntity(new StringEntity(obj.toJSONString(), "UTF-8"));
+ 
+        // 微信httpClient
+        CloseableHttpClient httpClient = WechatPayaHttpclientUtils.httpClient;
+        try {
+            if(httpClient == null){
+                log.info("关闭订单失败，请重试,无法连接微信支付服务器!");
+            }
+            //执行请求
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            //状态码
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 204) {
+                //关闭订单成功!
+                log.info("微信关闭订单成功: {}", orderNo);
+            }else if(statusCode == 202){
+                //用户支付中，需要输入密码
+                log.info("关闭微信订单--用户支付中，需要输入密码,暂时不做处理!");
+            }else{
+                log.info("关闭微信订单--关闭支付订单失败，出现未知原因: {}", EntityUtils.toString(response.getEntity()));
+            }
+        } catch (IOException e) {
+            log.info("关闭微信订单--关闭订单失败: {}", e.getMessage());
+        }
+        return false;
+    }
+
