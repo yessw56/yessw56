@@ -1,0 +1,31 @@
+import subprocess
+
+def start_vpn():
+    # 配置VPN参数
+    vpn_config = {
+        "server_ip": "vpn_server_ip",
+        "username": "your_username",
+        "password": "your_password"
+    }
+ 
+    # 构建VPN连接命令
+    vpn_command = [
+        "sudo", "strongswan", "up",
+        vpn_config["username"],
+        "--server", vpn_config["server_ip"],
+        "--username", vpn_config["username"],
+        "--password", vpn_config["password"]
+    ]
+ 
+    # 启动VPN连接
+    subprocess.run(vpn_command)
+
+def stop_vpn():
+    # 关闭VPN连接命令
+    stop_command = ["sudo", "strongswan", "downall"]
+ 
+    # 关闭VPN连接
+    subprocess.run(stop_command)
+
+if __name__ == "__main__":
+    start_vpn()  # 启动VPN连接
