@@ -1,0 +1,62 @@
+
+# 共同所在群聊成员分析
+def group_common_in():
+
+    # 获取所有活跃的群聊
+    groups = bot.groups()
+
+    # 每个好友与你相同的群聊个数
+    dict_common_in = {}
+
+    # 遍历所有好友，第0个为你自己，所以去掉
+    for x in friends[1:]:
+        # 依次在每个群聊中搜索
+        for y in groups:
+            # x在y中
+            if(x in y):
+                # 获取微信名称
+                name = x.nick_name
+                # 判断是否有备注，有的话就使用备注
+                if(x.remark_name and x.remark_name != ''):
+                    name = x.remark_name
+
+                # 增加计数
+                if(name in dict_common_in.keys()):
+                    dict_common_in[name] += 1
+                else:
+                    dict_common_in[name] = 1
+
+    # 从dict_common_in结果中取出前n大个数据
+    n = 0
+
+    if(len(dict_common_in) > 5):
+        n = 6
+    elif(len(dict_common_in) > 4):
+        n = 5
+    elif(len(dict_common_in) > 3):
+        n = 4
+    elif(len(dict_common_in) > 2):
+        n = 3
+    elif(len(dict_common_in) > 1):
+        n = 2
+    elif(len(dict_common_in) > 0):
+        n = 1
+
+    # 排序，并转化为list
+    sort_list = sorted(dict_common_in.items(), key=lambda item: item[1], reverse=True)
+
+    # 取出前n大的值
+    sort_list = sort_list[:n]
+
+    bar = Bar()
+    bar.add_xaxis([x[0] for x in sort_list])
+    bar.add_yaxis("共同所在群聊分析", [x[1] for x in sort_list])
+    bar.render('data/共同所在群聊分析.html')
+
+
+# 运行前，请先确保安装了所需库文件
+# 若没安装，请执行以下命令:pip install -r requirement.txt
+if __name__ == '__main__':
+
+    # 初始化所需文件夹
+    init_folders()
