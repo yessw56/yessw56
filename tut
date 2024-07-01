@@ -1,0 +1,15 @@
+    //地图按钮
+    MenuButton * map_button=new MenuButton(":/picture/map.png","",240,245);
+    map_button->setParent(this);
+    map_button->move(400,300);
+ 
+    //天气按钮
+    MenuButton * weather_button=new MenuButton(":/picture/weather.png","",245,245);
+    weather_button->setParent(this);
+    weather_button->move(700,300);
+ 
+    //进程结束处理
+    connect(my_pro,&QProcess::stateChanged,[=](){
+ 
+    });
+}
